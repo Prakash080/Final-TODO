@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/models/maincolor.dart';
-import 'package:phone_login/screens/home.dart';
 
 class VerifyPage extends GetWidget<AuthController> {
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -125,7 +123,10 @@ class VerifyPage extends GetWidget<AuthController> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      controller.phoneverification(
+                                          ph_c.text, context);
+                                    },
                                     child: Text(
                                       "Login",
                                       style: TextStyle(
