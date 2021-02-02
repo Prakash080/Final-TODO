@@ -9,6 +9,7 @@ import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
 import 'package:phone_login/screens/verification.dart';
 import 'package:phone_login/services/fireDB.dart';
+import 'package:phone_login/utils/root.dart';
 
 class AuthController extends GetxController {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -65,8 +66,8 @@ class AuthController extends GetxController {
   }
 
   Future logOut() async {
-    await googleSignIn.signOut();
     await _auth.signOut();
+    Get.offAll(Root());
   }
 
   void getErrorSnack(String title, String message) {
@@ -140,7 +141,7 @@ class AuthController extends GetxController {
 
     _auth.verifyPhoneNumber(
         phoneNumber: phone,
-        timeout: Duration(seconds: 60),
+        timeout: Duration(seconds: 5),
         verificationCompleted: (AuthCredential credential) async {
           Navigator.of(context).pop();
 
@@ -153,7 +154,6 @@ class AuthController extends GetxController {
           } else {
             print("Error");
           }
-
           //This callback would gets called when verification is done auto maticlly
         },
         verificationFailed: (Exception exception) {

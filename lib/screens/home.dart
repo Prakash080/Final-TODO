@@ -5,6 +5,7 @@ import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/controllers/todoController.dart';
 import 'package:phone_login/controllers/userController.dart';
 import 'package:phone_login/screens/deleteaccount.dart';
+import 'package:phone_login/screens/drawer.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/widgets/todoAlert.dart';
 import 'package:phone_login/widgets/todoCard.dart';
@@ -30,6 +31,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Home_drawer(),
       appBar: AppBar(
         title: getUserName(),
         actions: [
