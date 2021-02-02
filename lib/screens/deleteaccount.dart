@@ -88,7 +88,7 @@ class DeleteAccount extends GetWidget<AuthController> {
                                           Icons.email,
                                           color: mainColor,
                                         ),
-                                        labelText: 'E-mail'),
+                                        labelText: 'Registered E-mail'),
                                   ),
                                 ),
                                 Padding(

@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/controllers/todoController.dart';
 import 'package:phone_login/controllers/userController.dart';
-import 'package:phone_login/screens/deleteaccount.dart';
-import 'package:phone_login/screens/drawer.dart';
+import 'package:phone_login/widgets/drawer.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/widgets/todoAlert.dart';
 import 'package:phone_login/widgets/todoCard.dart';
@@ -30,25 +29,46 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _showDialog() {
+      // flutter defined function
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: new Text("Logout"),
+            content: new Text("Do you want to logout?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("No"),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              new FlatButton(
+                child: new Text("Yes"),
+                onPressed: () {
+                  Get.reset();
+                  Get.lazyPut(() => AuthController());
+                  Get.lazyPut(() => UserController());
+                  _authController.logOut();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       drawer: Home_drawer(),
       appBar: AppBar(
         title: getUserName(),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle_sharp),
-            onPressed: () {
-              Get.to(DeleteAccount());
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              Get.reset();
-              Get.lazyPut(() => AuthController());
-              Get.lazyPut(() => UserController());
-              _authController.logOut();
-            },
+            onPressed: _showDialog,
           ),
         ],
       ),
@@ -62,7 +82,7 @@ class Home extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Todos",
+            "Your Todos",
             style: TextStyle(
                 fontSize: MediaQuery.of(context).size.height / 25,
                 fontWeight: FontWeight.bold,

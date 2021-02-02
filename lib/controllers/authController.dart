@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:phone_login/controllers/userController.dart';
-import 'package:phone_login/main.dart';
 import 'package:phone_login/models/user.dart';
 import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
-import 'package:phone_login/screens/verification.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/utils/root.dart';
 

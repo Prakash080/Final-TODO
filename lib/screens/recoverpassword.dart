@@ -86,7 +86,7 @@ class RecoverPassword extends GetWidget<AuthController> {
                                         Icons.email,
                                         color: mainColor,
                                       ),
-                                      labelText: 'E-mail'),
+                                      labelText: 'Registered E-mail'),
                                   validator: (String value) {
                                     if (value.isEmpty) {
                                       return 'Email is required';
