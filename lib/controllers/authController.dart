@@ -40,7 +40,7 @@ class AuthController extends GetxController {
       if (rs) {
         _auth.currentUser.sendEmailVerification();
         Get.find<UserController>().user = _user;
-        Get.offAll(Home());
+        Get.offAll(VerifyPage());
         Get.snackbar("User Registered Successfully", "Welcome");
       }
     } catch (e) {
@@ -203,6 +203,6 @@ class AuthController extends GetxController {
                 );
               });
         },
-        codeAutoRetrievalTimeout: null);
+        codeAutoRetrievalTimeout: (String verificationId) {});
   }
 }
