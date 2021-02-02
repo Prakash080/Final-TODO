@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:phone_login/controllers/userController.dart';
+import 'package:phone_login/main.dart';
 import 'package:phone_login/models/user.dart';
 import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
@@ -40,7 +41,7 @@ class AuthController extends GetxController {
       if (rs) {
         _auth.currentUser.sendEmailVerification();
         Get.find<UserController>().user = _user;
-        Get.offAll(VerifyPage());
+        Get.offAll(Home());
         Get.snackbar("User Registered Successfully", "Welcome");
       }
     } catch (e) {
@@ -66,9 +67,6 @@ class AuthController extends GetxController {
   Future logOut() async {
     await googleSignIn.signOut();
     await _auth.signOut();
-    Get.reset();
-    Get.lazyPut(() => AuthController());
-    Get.lazyPut(() => UserController());
   }
 
   void getErrorSnack(String title, String message) {

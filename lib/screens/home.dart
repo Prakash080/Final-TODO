@@ -42,6 +42,9 @@ class Home extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
+              Get.reset();
+              Get.lazyPut(() => AuthController());
+              Get.lazyPut(() => UserController());
               _authController.logOut();
             },
           ),
