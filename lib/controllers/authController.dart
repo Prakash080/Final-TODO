@@ -40,7 +40,7 @@ class AuthController extends GetxController {
       if (rs) {
         _auth.currentUser.sendEmailVerification();
         Get.find<UserController>().user = _user;
-        Get.offAll(Home());
+        Get.to(Home());
         Get.snackbar("User Registered Successfully", "Welcome");
       }
     } catch (e) {
@@ -56,7 +56,7 @@ class AuthController extends GetxController {
       );
       Get.find<UserController>().user =
           await FireDb().getUser(userCredential.user.uid);
-      Get.back();
+      Get.to(Home());
       Get.snackbar("Login Successful", "Welcome");
     } catch (e) {
       getErrorSnack("Error While SignIn Account", e.message);
@@ -90,7 +90,7 @@ class AuthController extends GetxController {
 
     await user.reauthenticateWithCredential(credential).then((value) {
       value.user.delete().then((res) {
-        Get.offAll(Login());
+        Get.offAll(Root());
         Get.snackbar("User Account Deleted ", "Success");
       });
     }).catchError((onError) => getErrorSnack("Credential Error", "Failed"));
@@ -126,7 +126,7 @@ class AuthController extends GetxController {
       var rs = await FireDb().createNewUser(_user);
       if (rs) {
         Get.find<UserController>().user = _user;
-        Get.offAll(Home());
+        Get.to(Home());
         Get.snackbar("Login Successful", "Welcome");
       }
     } catch (e) {

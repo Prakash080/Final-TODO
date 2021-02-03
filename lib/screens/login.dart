@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
+import 'package:phone_login/controllers/userController.dart';
 import 'package:phone_login/models/maincolor.dart';
 import 'package:phone_login/screens/recoverpassword.dart';
 import 'package:phone_login/screens/signup.dart';
@@ -216,7 +217,6 @@ class Login extends GetWidget<AuthController> {
                           padding: EdgeInsets.only(top: 40),
                           child: FlatButton(
                             onPressed: () {
-                              CircularProgressIndicator();
                               Get.to(SignUp());
                             },
                             child: RichText(

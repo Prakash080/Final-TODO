@@ -216,8 +216,7 @@ class SignUp extends GetWidget<AuthController> {
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
                                             ),
-                                            onPressed: () =>
-                                                Get.offAll(Login()),
+                                            onPressed: () => Get.to(Login()),
                                             child: Text(
                                               "Cancel",
                                               style: TextStyle(
@@ -252,7 +251,6 @@ class SignUp extends GetWidget<AuthController> {
                                                   BorderRadius.circular(30.0),
                                             ),
                                             onPressed: () async {
-                                              CircularProgressIndicator();
                                               RegisterUser();
                                             },
                                             child: Text(

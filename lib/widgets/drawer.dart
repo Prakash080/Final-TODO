@@ -8,7 +8,6 @@ import 'package:phone_login/screens/home.dart';
 
 class Home_drawer extends GetWidget<AuthController> {
   FirebaseAuth _auth = FirebaseAuth.instance;
-  final AuthController _authController = Get.find();
 
   var mainColor = Color(0xff2470c7);
   @override
@@ -37,7 +36,7 @@ class Home_drawer extends GetWidget<AuthController> {
                   Get.reset();
                   Get.lazyPut(() => AuthController());
                   Get.lazyPut(() => UserController());
-                  _authController.logOut();
+                  controller.logOut();
                 },
               ),
             ],
@@ -60,7 +59,7 @@ class Home_drawer extends GetWidget<AuthController> {
                       _name != null ? "Welcome " + _name.toString() : "Welcome",
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: MediaQuery.of(context).size.height / 50,
+                        fontSize: MediaQuery.of(context).size.height / 60,
                       )),
                   SizedBox(
                     height: 5.0,
@@ -68,7 +67,7 @@ class Home_drawer extends GetWidget<AuthController> {
                   Text(_auth.currentUser.email.toString(),
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: MediaQuery.of(context).size.height / 50,
+                        fontSize: MediaQuery.of(context).size.height / 60,
                       )),
                 ],
               ),
@@ -80,11 +79,10 @@ class Home_drawer extends GetWidget<AuthController> {
               title: Text("Your Todos",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: MediaQuery.of(context).size.height / 40,
+                    fontSize: MediaQuery.of(context).size.height / 50,
                   )),
               onTap: () {
-                User user = _auth.currentUser;
-                Get.to(Home());
+                Get.back();
               },
             ),
           ),
@@ -94,7 +92,7 @@ class Home_drawer extends GetWidget<AuthController> {
               title: Text("Delete Account",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    fontSize: MediaQuery.of(context).size.height / 40,
+                    fontSize: MediaQuery.of(context).size.height / 50,
                   )),
               onTap: () => Get.to(DeleteAccount()),
             ),
@@ -105,7 +103,7 @@ class Home_drawer extends GetWidget<AuthController> {
             title: Text("Logout",
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: MediaQuery.of(context).size.height / 40,
+                  fontSize: MediaQuery.of(context).size.height / 50,
                 )),
             onTap: _showDialog,
             // flutter defined function

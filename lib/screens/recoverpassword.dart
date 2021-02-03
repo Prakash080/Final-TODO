@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
+import 'package:phone_login/models/maincolor.dart';
 
 class RecoverPassword extends GetWidget<AuthController> {
-  var mainColor = Color(0xff2470c7);
   final TextEditingController email_c = TextEditingController();
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   @override
