@@ -8,6 +8,7 @@ import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/utils/root.dart';
+import 'package:phone_login/widgets/drawer.dart';
 
 class AuthController extends GetxController {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -40,7 +41,7 @@ class AuthController extends GetxController {
       if (rs) {
         _auth.currentUser.sendEmailVerification();
         Get.find<UserController>().user = _user;
-        Get.to(Home());
+        Get.off(Home());
         Get.snackbar("User Registered Successfully", "Welcome");
       }
     } catch (e) {
@@ -76,7 +77,7 @@ class AuthController extends GetxController {
 
   void sendpasswordresetemail(String email) async {
     await _auth.sendPasswordResetEmail(email: email).then((value) {
-      Get.offAll(Login());
+      Get.off(Login());
       Get.snackbar("Password Reset email link is been sent", "Success");
     }).catchError(
         (onError) => getErrorSnack("Error In Email Reset", onError.message));
@@ -90,7 +91,7 @@ class AuthController extends GetxController {
 
     await user.reauthenticateWithCredential(credential).then((value) {
       value.user.delete().then((res) {
-        Get.offAll(Root());
+        Get.offAll(Login());
         Get.snackbar("User Account Deleted ", "Success");
       });
     }).catchError((onError) => getErrorSnack("Credential Error", "Failed"));
@@ -132,73 +133,5 @@ class AuthController extends GetxController {
     } catch (e) {
       getErrorSnack("Error While Logging in", e.message);
     }
-  }
-
-  Future<bool> phoneverification(String phone, BuildContext context) async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
-    _auth.verifyPhoneNumber(
-        phoneNumber: phone,
-        timeout: Duration(seconds: 5),
-        verificationCompleted: (AuthCredential credential) async {
-          Navigator.of(context).pop();
-
-          UserCredential result = await _auth.signInWithCredential(credential);
-
-          User user = result.user;
-
-          if (user != null) {
-            Get.to(Home());
-          } else {
-            print("Error");
-          }
-          //This callback would gets called when verification is done auto maticlly
-        },
-        verificationFailed: (Exception exception) {
-          print(exception);
-        },
-        codeSent: (String verificationId, [int forceResendingToken]) {
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Give the code?"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: _codeController,
-                      ),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Confirm"),
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      onPressed: () async {
-                        final code = _codeController.text.trim();
-                        AuthCredential credential =
-                            PhoneAuthProvider.credential(
-                                verificationId: verificationId, smsCode: code);
-
-                        UserCredential result =
-                            await _auth.signInWithCredential(credential);
-
-                        User user = result.user;
-
-                        if (user != null) {
-                          Get.to(Home());
-                        } else {
-                          print("Error");
-                        }
-                      },
-                    )
-                  ],
-                );
-              });
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {});
   }
 }
