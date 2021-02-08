@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/models/maincolor.dart';
+import 'package:phone_login/widgets/loading.dart';
 
 class RecoverPassword extends GetWidget<AuthController> {
   final TextEditingController email_c = TextEditingController();
@@ -11,46 +12,28 @@ class RecoverPassword extends GetWidget<AuthController> {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-            backgroundColor: Color(0xfff2f3f7),
+            backgroundColor: mainColor,
             body: SingleChildScrollView(
                 child: Stack(children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                width: MediaQuery.of(context).size.width,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: mainColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: const Radius.circular(70),
-                      bottomRight: const Radius.circular(70),
-                    ),
-                  ),
-                ),
-              ),
               Column(mainAxisAlignment: MainAxisAlignment.center, children: <
                   Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 70),
-                      child: Text(
-                        'To-Do',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height / 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
+                        padding: const EdgeInsets.symmetric(vertical: 70),
+                        child: Image(
+                            image: AssetImage("assets/ICON.png"),
+                            width: MediaQuery.of(context).size.height * 0.1,
+                            height: MediaQuery.of(context).size.height * 0.1))
                   ],
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                     Widget>[
                   ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100),
+                          bottomRight: Radius.circular(100)),
                       child: Form(
                         key: formkey,
                         child: Container(
@@ -69,6 +52,8 @@ class RecoverPassword extends GetWidget<AuthController> {
                                   Text(
                                     "Reset Password",
                                     style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Montserrat',
                                       fontSize:
                                           MediaQuery.of(context).size.height /
                                               30,
@@ -109,19 +94,23 @@ class RecoverPassword extends GetWidget<AuthController> {
                                     height: 1 *
                                         (MediaQuery.of(context).size.height /
                                             20),
-                                    width: 4 *
+                                    width: 6 *
                                         (MediaQuery.of(context).size.width /
                                             10),
-                                    margin: EdgeInsets.only(bottom: 20),
+                                    margin:
+                                        EdgeInsets.only(top: 20, bottom: 10),
                                     child: RaisedButton(
                                       elevation: 5.0,
                                       color: mainColor,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30),
+                                            bottomRight: Radius.circular(30)),
                                       ),
                                       onPressed: () {
+                                        Get.to(Loading());
                                         if (!formkey.currentState.validate()) {
+                                          Get.back();
                                           return;
                                         }
                                         controller.sendpasswordresetemail(
@@ -130,8 +119,46 @@ class RecoverPassword extends GetWidget<AuthController> {
                                       child: Text(
                                         "Get Link",
                                         style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat',
                                           color: Colors.white,
-                                          letterSpacing: 1.5,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              40,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    height: 1 *
+                                        (MediaQuery.of(context).size.height /
+                                            20),
+                                    width: 6 *
+                                        (MediaQuery.of(context).size.width /
+                                            10),
+                                    child: RaisedButton(
+                                      elevation: 5.0,
+                                      color: mainColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(30),
+                                            bottomRight: Radius.circular(30)),
+                                      ),
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat',
+                                          color: Colors.white,
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .height /

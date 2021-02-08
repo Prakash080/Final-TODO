@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "52946545015",
-    "project_id": "phone-login-76b89",
-    "storage_bucket": "phone-login-76b89.appspot.com"
+    "project_number": "142904274227",
+    "project_id": "to-do-app-24944",
+    "storage_bucket": "to-do-app-24944.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:52946545015:android:a5e388bda134f34b2c5972",
+        "mobilesdk_app_id": "1:142904274227:android:f4120b1a03cf2df56e6246",
         "android_client_info": {
           "package_name": "com.example.phone_login"
         }
       },
       "oauth_client": [
         {
-          "client_id": "52946545015-kd7io3sumhp2q9nqb7uerv8s8sbu179a.apps.googleusercontent.com",
+          "client_id": "142904274227-uju6ipbpplk3liu0s3db5q3n6j1qaghp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.phone_login",
@@ -22,20 +22,20 @@
           }
         },
         {
-          "client_id": "52946545015-mv5i40ooeff60k3t7g65e0gtqv643at8.apps.googleusercontent.com",
+          "client_id": "142904274227-f29h1lh4aeeir74ad5hrl3f5s1f0ij64.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAFI6V-6Pv-cgUen1dW5RsWbSgKX-z6Ma4"
+          "current_key": "AIzaSyB6cTNlpu5gv6dXrkOd4guaKnBWJWxCtP4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "52946545015-mv5i40ooeff60k3t7g65e0gtqv643at8.apps.googleusercontent.com",
+              "client_id": "142904274227-f29h1lh4aeeir74ad5hrl3f5s1f0ij64.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

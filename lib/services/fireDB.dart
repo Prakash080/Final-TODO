@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:phone_login/models/todo.dart';
 import 'package:phone_login/models/user.dart';
 
@@ -10,6 +11,15 @@ class FireDb {
         "name": user.name,
         "email": user.email,
       });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteNewUser(User user) async {
+    try {
+      await _firestore.collection("users").doc(user.uid).delete();
       return true;
     } catch (e) {
       return false;

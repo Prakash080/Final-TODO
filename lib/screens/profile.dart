@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
+import 'package:phone_login/controllers/userController.dart';
 import 'package:phone_login/models/maincolor.dart';
-import 'package:phone_login/widgets/loading.dart';
+import 'package:phone_login/screens/deleteaccount.dart';
+import 'package:phone_login/screens/home.dart';
+import 'package:phone_login/services/fireDB.dart';
+import 'package:phone_login/screens/changepassword.dart';
 
-class DeleteAccount extends GetWidget<AuthController> {
-  final TextEditingController email_c = TextEditingController();
-  final TextEditingController pass_c = TextEditingController();
-  @override
+class profile extends StatelessWidget {
   Widget build(BuildContext context) {
+    getUserName() {
+      return GetX<UserController>(
+        init: Get.put(UserController()),
+        initState: (_) async {
+          Get.find<UserController>().user =
+              await FireDb().getUser(Get.find<AuthController>().user.uid);
+        },
+        builder: (_userController) {
+          return Text(
+            (_userController.user != null)
+                ? _userController.user.name.toString()
+                : null,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: MediaQuery.of(context).size.height / 50,
+            ),
+          );
+        },
+      );
+    }
+
+    var _email = Get.arguments;
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -53,7 +76,7 @@ class DeleteAccount extends GetWidget<AuthController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      "Delete Account",
+                                      "User Profile",
                                       style: TextStyle(
                                         color: mainColor,
                                         fontWeight: FontWeight.bold,
@@ -66,49 +89,46 @@ class DeleteAccount extends GetWidget<AuthController> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 15, left: 15, right: 15),
-                                  child: TextFormField(
-                                    controller: email_c,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.email,
+                                    padding: EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    child: Text(
+                                      "Name:",
+                                      style: TextStyle(
                                         color: mainColor,
-                                      ),
-                                      labelText: 'Registered E-mail',
-                                      labelStyle: TextStyle(
-                                        color: mainColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Montserrat',
                                         fontSize:
                                             MediaQuery.of(context).size.height /
                                                 50,
-                                        fontFamily: 'Montserrat',
                                       ),
-                                    ),
-                                  ),
-                                ),
+                                    )),
+                                getUserName(),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: TextFormField(
-                                    controller: pass_c,
-                                    keyboardType: TextInputType.text,
-                                    obscureText: true,
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        Icons.lock,
+                                    padding: EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    child: Text(
+                                      "Email:",
+                                      style: TextStyle(
                                         color: mainColor,
-                                      ),
-                                      labelText: 'Password',
-                                      labelStyle: TextStyle(
-                                        color: mainColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Montserrat',
                                         fontSize:
                                             MediaQuery.of(context).size.height /
                                                 50,
-                                        fontFamily: 'Montserrat',
                                       ),
-                                    ),
-                                  ),
-                                ),
+                                    )),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    child: Text(
+                                      _email,
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize:
+                                            MediaQuery.of(context).size.height /
+                                                50,
+                                      ),
+                                    )),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
@@ -130,9 +150,7 @@ class DeleteAccount extends GetWidget<AuthController> {
                                               bottomRight: Radius.circular(30)),
                                         ),
                                         onPressed: () {
-                                          Get.to(Loading());
-                                          controller.deleteuseraccount(
-                                              email_c.text, pass_c.text);
+                                          Get.off(DeleteAccount());
                                         },
                                         child: Text(
                                           "Delete Account",
@@ -160,7 +178,7 @@ class DeleteAccount extends GetWidget<AuthController> {
                                       width: 6 *
                                           (MediaQuery.of(context).size.width /
                                               10),
-                                      margin: EdgeInsets.only(bottom: 20),
+                                      margin: EdgeInsets.only(bottom: 10),
                                       child: RaisedButton(
                                         elevation: 5.0,
                                         color: mainColor,
@@ -169,9 +187,46 @@ class DeleteAccount extends GetWidget<AuthController> {
                                               topLeft: Radius.circular(30),
                                               bottomRight: Radius.circular(30)),
                                         ),
-                                        onPressed: () => Get.back(),
+                                        onPressed: () =>
+                                            Get.off(ChangePassword()),
                                         child: Text(
-                                          "Cancel",
+                                          "Change Password",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Montserrat',
+                                            color: Colors.white,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                50,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 1 *
+                                          (MediaQuery.of(context).size.height /
+                                              20),
+                                      width: 6 *
+                                          (MediaQuery.of(context).size.width /
+                                              10),
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      child: RaisedButton(
+                                        elevation: 5.0,
+                                        color: mainColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(30),
+                                              bottomRight: Radius.circular(30)),
+                                        ),
+                                        onPressed: () => Get.off(Home()),
+                                        child: Text(
+                                          "Back",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontFamily: 'Montserrat',

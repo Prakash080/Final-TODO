@@ -13,14 +13,12 @@ class TodoController extends GetxController {
   @override
   @mustCallSuper
   void onInit() async {
-  
     clear();
     Get.find<UserController>().user =
         await FireDb().getUser(Get.find<AuthController>().user.uid);
     var user = Get.find<UserController>().user;
 
-    todoList.bindStream(FireDb()
-        .todoStream(user.id)); 
+    todoList.bindStream(FireDb().todoStream(user.id));
     super.onInit();
   }
 

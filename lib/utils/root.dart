@@ -7,7 +7,6 @@ import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
 
 class Root extends GetWidget<AuthController> {
-
   @override
   Widget build(BuildContext context) {
     return GetX<AuthController>(
@@ -16,7 +15,6 @@ class Root extends GetWidget<AuthController> {
       },
       builder: (_) {
         if (Get.find<AuthController>().user != null) {
-         
           return Home();
         } else {
           return Login();

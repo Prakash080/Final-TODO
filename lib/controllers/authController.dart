@@ -1,20 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:phone_login/controllers/userController.dart';
 import 'package:phone_login/models/user.dart';
+import 'package:phone_login/screens/Verify.dart';
 import 'package:phone_login/screens/home.dart';
 import 'package:phone_login/screens/login.dart';
+import 'package:phone_login/screens/gSignup.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/utils/root.dart';
-import 'package:phone_login/widgets/drawer.dart';
 
 class AuthController extends GetxController {
   FirebaseAuth _auth = FirebaseAuth.instance;
   Rx<User> _fireUser = Rx<User>();
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  TextEditingController _codeController = TextEditingController();
 
   User get user => _fireUser.value;
 
@@ -33,19 +34,20 @@ class AuthController extends GetxController {
       );
 
       UserModel _user = UserModel(
-          id: userCredential.user.uid,
-          email: userCredential.user.email,
-          name: name);
+        id: userCredential.user.uid,
+        email: userCredential.user.email,
+        name: name,
+      );
 
       var rs = await FireDb().createNewUser(_user);
       if (rs) {
-        _auth.currentUser.sendEmailVerification();
         Get.find<UserController>().user = _user;
-        Get.off(Home());
-        Get.snackbar("User Registered Successfully", "Welcome");
+        Get.back();
+        Get.offAll(VerifyPage());
       }
     } catch (e) {
-      getErrorSnack("Error While Creating Account", e.message);
+      Get.back();
+      Fluttertoast.showToast(msg: e.message);
     }
   }
 
@@ -57,30 +59,30 @@ class AuthController extends GetxController {
       );
       Get.find<UserController>().user =
           await FireDb().getUser(userCredential.user.uid);
+      Get.back();
       Get.to(Home());
-      Get.snackbar("Login Successful", "Welcome");
+      Fluttertoast.showToast(msg: "Login Successful");
     } catch (e) {
-      getErrorSnack("Error While SignIn Account", e.message);
+      Get.back();
+      Fluttertoast.showToast(msg: e.message);
     }
   }
 
   Future logOut() async {
+    await googleSignIn.signOut();
     await _auth.signOut();
     Get.offAll(Root());
   }
 
-  void getErrorSnack(String title, String message) {
-    Get.snackbar(title, message,
-        snackPosition:
-            SnackPosition.BOTTOM); // For Checking Error form Firebase
-  }
-
   void sendpasswordresetemail(String email) async {
     await _auth.sendPasswordResetEmail(email: email).then((value) {
+      Get.back();
       Get.off(Login());
-      Get.snackbar("Password Reset email link is been sent", "Success");
-    }).catchError(
-        (onError) => getErrorSnack("Error In Email Reset", onError.message));
+      Fluttertoast.showToast(msg: "Password Reset email link has been sent");
+    }).catchError((onError) {
+      Get.back();
+      Fluttertoast.showToast(msg: onError.message);
+    });
   }
 
   void deleteuseraccount(String email, String pass) async {
@@ -90,19 +92,22 @@ class AuthController extends GetxController {
         EmailAuthProvider.credential(email: email, password: pass);
 
     await user.reauthenticateWithCredential(credential).then((value) {
+      FireDb().deleteNewUser(user);
       value.user.delete().then((res) {
+        Get.back();
         Get.offAll(Login());
-        Get.snackbar("User Account Deleted ", "Success");
+        Fluttertoast.showToast(msg: "User account deleted successfully");
       });
-    }).catchError((onError) => getErrorSnack("Credential Error", "Failed"));
+    }).catchError((onError) {
+      Get.back();
+      Fluttertoast.showToast(msg: onError.message);
+    });
   }
 
   Future google_signIn() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-
     final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
-
     final AuthCredential authcredential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken);
@@ -111,27 +116,44 @@ class AuthController extends GetxController {
         await _auth.signInWithCredential(authcredential);
 
     final User user = userCredential.user;
-    print(user.uid);
     assert(user.displayName != null);
     assert(user.email != null);
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
 
     try {
-      UserModel _user = UserModel(
-        id: user.uid,
-        email: user.email,
-        name: user.displayName,
-      );
-
-      var rs = await FireDb().createNewUser(_user);
-      if (rs) {
-        Get.find<UserController>().user = _user;
-        Get.to(Home());
-        Get.snackbar("Login Successful", "Welcome");
-      }
+      Get.back();
+      Get.to(GSignUp(), arguments: [user.displayName, user.email]);
+      user.delete();
     } catch (e) {
-      getErrorSnack("Error While Logging in", e.message);
+      Get.back();
+      Fluttertoast.showToast(msg: e.message);
     }
+  }
+
+  Future<bool> checkcurrentpassword(String currpassword) async {
+    return await validatepassword(currpassword);
+  }
+
+  Future<bool> validatepassword(String password) async {
+    var firebaseuser = await _auth.currentUser;
+    var authcredential = EmailAuthProvider.credential(
+        email: firebaseuser.email, password: password);
+    try {
+      var authresult =
+          await firebaseuser.reauthenticateWithCredential(authcredential);
+      return authresult.user != null;
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.message);
+      return false;
+    }
+  }
+
+  void updateuserpassword(String newpassword) async {
+    var firebaseuser = await _auth.currentUser;
+    firebaseuser.updatePassword(newpassword);
+    Get.back();
+    Get.off(Home());
+    Fluttertoast.showToast(msg: "Password updated successfully");
   }
 }

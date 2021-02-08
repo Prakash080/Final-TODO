@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:phone_login/controllers/authController.dart';
-import 'package:phone_login/controllers/userController.dart';
 import 'package:phone_login/models/maincolor.dart';
+import 'package:phone_login/screens/mailSignup.dart';
 import 'package:phone_login/screens/recoverpassword.dart';
-import 'package:phone_login/screens/signup.dart';
+import 'package:phone_login/widgets/loading.dart';
 
-class Login extends GetWidget<AuthController> {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _showPassword = true;
+  AuthController _authController = AuthController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +24,10 @@ class Login extends GetWidget<AuthController> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: Color(0xfff2f3f7),
+          backgroundColor: mainColor,
           body: SingleChildScrollView(
             child: Stack(
               children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  width: MediaQuery.of(context).size.width,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: mainColor,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: const Radius.circular(70),
-                        bottomRight: const Radius.circular(70),
-                      ),
-                    ),
-                  ),
-                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -41,27 +35,23 @@ class Login extends GetWidget<AuthController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40),
-                          child: Text(
-                            'To-Do',
-                            style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.height / 25,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Image(
+                                image: AssetImage("assets/ICON.png"),
+                                width: MediaQuery.of(context).size.height * 0.1,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.1))
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         ClipRRect(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          ),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100)),
                           child: Container(
-                            height: MediaQuery.of(context).size.height * 0.6,
+                            height: MediaQuery.of(context).size.height * 0.68,
                             width: MediaQuery.of(context).size.width * 0.8,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -73,18 +63,25 @@ class Login extends GetWidget<AuthController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.height /
-                                                30,
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "Login",
+                                        style: TextStyle(
+                                          color: mainColor,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              30,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8),
+                                  padding: EdgeInsets.only(left: 15, right: 15),
                                   child: TextFormField(
                                     controller: emailController,
                                     keyboardType: TextInputType.emailAddress,
@@ -93,21 +90,48 @@ class Login extends GetWidget<AuthController> {
                                           Icons.email,
                                           color: mainColor,
                                         ),
-                                        labelText: 'E-mail'),
+                                        labelText: 'E-mail',
+                                        labelStyle: TextStyle(
+                                          color: mainColor,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              50,
+                                          fontFamily: 'Montserrat',
+                                        )),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(8),
+                                  padding: EdgeInsets.only(left: 15, right: 15),
                                   child: TextFormField(
                                     controller: passwordController,
                                     keyboardType: TextInputType.text,
-                                    obscureText: true,
+                                    obscureText: _showPassword,
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(
                                         Icons.lock,
                                         color: mainColor,
                                       ),
+                                      suffixIcon: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _showPassword = !_showPassword;
+                                          });
+                                        },
+                                        child: Icon(
+                                            _showPassword
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: mainColor),
+                                      ),
                                       labelText: 'Password',
+                                      labelStyle: TextStyle(
+                                        color: mainColor,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height /
+                                                50,
+                                        fontFamily: 'Montserrat',
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -117,9 +141,21 @@ class Login extends GetWidget<AuthController> {
                                   children: <Widget>[
                                     FlatButton(
                                       onPressed: () {
+                                        emailController.clear();
+                                        passwordController.clear();
                                         Get.to(RecoverPassword());
                                       },
-                                      child: Text("Forgot Password"),
+                                      child: Text(
+                                        "Forgot Password?",
+                                        style: TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              60,
+                                          color: Colors.black,
+                                          fontFamily: 'Montserrat',
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -135,19 +171,24 @@ class Login extends GetWidget<AuthController> {
                                               10),
                                       margin: EdgeInsets.only(bottom: 20),
                                       child: RaisedButton(
-                                        elevation: 5.0,
+                                        elevation: 15.0,
                                         color: mainColor,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(30),
+                                              bottomRight: Radius.circular(30)),
                                         ),
-                                        onPressed: () {
-                                          controller.login(emailController.text,
+                                        onPressed: () async {
+                                          Get.to(Loading());
+                                          _authController.login(
+                                              emailController.text,
                                               passwordController.text);
                                         },
                                         child: Text(
                                           "Login",
                                           style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Montserrat',
                                             color: Colors.white,
                                             letterSpacing: 1.5,
                                             fontSize: MediaQuery.of(context)
@@ -164,15 +205,16 @@ class Login extends GetWidget<AuthController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Container(
-                                      margin: EdgeInsets.only(bottom: 20),
+                                      margin:
+                                          EdgeInsets.only(top: 10, bottom: 10),
                                       child: Text(
                                         '----- OR -----',
                                         style: TextStyle(
-                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Montserrat',
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .height /
-                                              50,
+                                              45,
                                         ),
                                       ),
                                     )
@@ -181,8 +223,32 @@ class Login extends GetWidget<AuthController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 15, bottom: 15),
+                                      child: Text(
+                                        "Sign-up using",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              35,
+                                          color: mainColor,
+                                          fontFamily: 'Montserrat',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
                                     GestureDetector(
-                                      onTap: () => controller.google_signIn(),
+                                      onTap: () {
+                                        Get.to(Loading());
+                                        _authController.google_signIn();
+                                      },
                                       child: Container(
                                         height: 60,
                                         width: 60,
@@ -192,7 +258,7 @@ class Login extends GetWidget<AuthController> {
                                           boxShadow: [
                                             BoxShadow(
                                                 color: Colors.black26,
-                                                offset: Offset(0, 2),
+                                                offset: Offset(10, 10),
                                                 blurRadius: 6.0)
                                           ],
                                         ),
@@ -201,45 +267,36 @@ class Login extends GetWidget<AuthController> {
                                           color: Colors.white,
                                         ),
                                       ),
+                                    ),
+                                    SizedBox(
+                                      width: 50.0,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Get.to(mailSignup());
+                                      },
+                                      child: Container(
+                                        height: 60,
+                                        width: 60,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: mainColor,
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.black26,
+                                                offset: Offset(10, 10),
+                                                blurRadius: 6.0)
+                                          ],
+                                        ),
+                                        child: Icon(
+                                          FontAwesomeIcons.solidEnvelope,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     )
                                   ],
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: FlatButton(
-                            onPressed: () {
-                              Get.to(SignUp());
-                            },
-                            child: RichText(
-                              text: TextSpan(children: [
-                                TextSpan(
-                                  text: 'Dont have an account? ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height / 45,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: 'Register Now',
-                                  style: TextStyle(
-                                    color: mainColor,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height / 45,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ]),
                             ),
                           ),
                         ),

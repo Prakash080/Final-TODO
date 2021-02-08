@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:phone_login/models/todo.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/widgets/todoAlert.dart';
+import 'package:intl/intl.dart';
 
 class TodoCard extends StatelessWidget {
   final String uid;
@@ -11,7 +13,8 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = new DateTime.now();
+    DateTime date = DateTime.fromMicrosecondsSinceEpoch(
+        todo.dateCreated.microsecondsSinceEpoch);
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Container(
@@ -27,10 +30,14 @@ class TodoCard extends StatelessWidget {
                   : TextStyle(
                       fontSize: MediaQuery.of(context).size.height / 50,
                     )),
-          subtitle: Text('Created on:${now.day}/${now.month}/${now.year}'),
+          subtitle: Text("Created on:${DateFormat('dd/MM/yyyy').format(date)}"),
           leading: Checkbox(
             value: todo.done,
             onChanged: (newValue) {
+              if (newValue == true)
+                Fluttertoast.showToast(
+                    msg: "Todo Completed, you can delete the todo",
+                    backgroundColor: Colors.grey);
               todo.done = newValue;
               FireDb().updateTodo(
                 todo,
@@ -41,10 +48,13 @@ class TodoCard extends StatelessWidget {
           trailing: IconButton(
               icon: Icon(todo.done ? Icons.delete_forever : Icons.edit),
               onPressed: () {
-                if (todo.done)
+                if (todo.done) {
                   FireDb().deleteTodo(todo, uid);
-                else
+                  Fluttertoast.showToast(
+                      msg: "Todo Deleted", backgroundColor: Colors.grey);
+                } else {
                   TodoAlert().editTodoDailog(todo);
+                }
               }),
         ),
       ),
