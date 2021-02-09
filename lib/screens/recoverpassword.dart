@@ -72,7 +72,7 @@ class RecoverPassword extends GetWidget<AuthController> {
                                         color: mainColor,
                                       ),
                                       labelText: 'Registered E-mail'),
-                                  validator: (String value) {
+                                  validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Email is required';
                                     }
@@ -80,7 +80,8 @@ class RecoverPassword extends GetWidget<AuthController> {
                                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                         .hasMatch(value)) {
                                       return 'Please enter a valid email address';
-                                    }
+                                    } else
+                                      return null;
                                   },
                                   onSaved: (String value) {
                                     email_c.text = value;

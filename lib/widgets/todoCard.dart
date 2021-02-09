@@ -37,7 +37,7 @@ class TodoCard extends StatelessWidget {
               if (newValue == true)
                 Fluttertoast.showToast(
                     msg: "Todo Completed, you can delete the todo",
-                    backgroundColor: Colors.grey);
+                    backgroundColor: Colors.black);
               todo.done = newValue;
               FireDb().updateTodo(
                 todo,
@@ -51,7 +51,7 @@ class TodoCard extends StatelessWidget {
                 if (todo.done) {
                   FireDb().deleteTodo(todo, uid);
                   Fluttertoast.showToast(
-                      msg: "Todo Deleted", backgroundColor: Colors.grey);
+                      msg: "Todo Deleted", backgroundColor: Colors.black);
                 } else {
                   TodoAlert().editTodoDailog(todo);
                 }

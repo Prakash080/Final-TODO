@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:phone_login/models/todo.dart';
 import 'package:phone_login/models/user.dart';
 
@@ -10,6 +9,8 @@ class FireDb {
       await _firestore.collection("users").doc(user.id).set({
         "name": user.name,
         "email": user.email,
+        "phone": user.phone,
+        "photoURL": user.photoURL
       });
       return true;
     } catch (e) {
@@ -17,9 +18,9 @@ class FireDb {
     }
   }
 
-  Future<bool> deleteNewUser(User user) async {
+  Future<bool> deleteNewUser(String uid) async {
     try {
-      await _firestore.collection("users").doc(user.uid).delete();
+      await _firestore.collection("users").doc(uid).delete();
       return true;
     } catch (e) {
       return false;
@@ -58,7 +59,7 @@ class FireDb {
         .orderBy("dateCreated", descending: true)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<TodoModel> retVal = List();
+      List<TodoModel> retVal = [];
       query.docs.forEach((element) {
         retVal.add(TodoModel.fromDocumentSnapshot(element));
       });
@@ -88,6 +89,15 @@ class FireDb {
           .collection("todos")
           .doc(todo.todoId)
           .delete();
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<void> updateURL(String uid, String downloadUrl) async {
+    try {
+      _firestore.collection("users").doc(uid).update({'photoURL': downloadUrl});
     } catch (e) {
       print(e);
       rethrow;

@@ -178,12 +178,7 @@ class _LoginState extends State<Login> {
                                               topLeft: Radius.circular(30),
                                               bottomRight: Radius.circular(30)),
                                         ),
-                                        onPressed: () async {
-                                          Get.to(Loading());
-                                          _authController.login(
-                                              emailController.text,
-                                              passwordController.text);
-                                        },
+                                        onPressed: _login,
                                         child: Text(
                                           "Login",
                                           style: TextStyle(
@@ -246,7 +241,6 @@ class _LoginState extends State<Login> {
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: () {
-                                        Get.to(Loading());
                                         _authController.google_signIn();
                                       },
                                       child: Container(
@@ -310,5 +304,12 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void _login() async {
+    Get.to(Loading());
+    _authController.login(emailController.text, passwordController.text);
+    emailController.clear();
+    passwordController.clear();
   }
 }

@@ -23,12 +23,32 @@ class Home_drawer extends GetWidget<AuthController> {
         },
         builder: (_userController) {
           return Text(
-            (_userController.user == null)
-                ? ""
-                : _userController.user.name.toString(),
+            _userController.user.name.toString(),
+            textAlign: TextAlign.center,
             style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: MediaQuery.of(context).size.height / 60),
+              fontFamily: 'Montserrat',
+              fontSize: MediaQuery.of(context).size.height / 55,
+            ),
+          );
+        },
+      );
+    }
+
+    getUseremail() {
+      return GetX<UserController>(
+        init: Get.put(UserController()),
+        initState: (_) async {
+          Get.find<UserController>().user =
+              await FireDb().getUser(Get.find<AuthController>().user.uid);
+        },
+        builder: (_userController) {
+          return Text(
+            _userController.user.email.toString(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: MediaQuery.of(context).size.height / 55,
+            ),
           );
         },
       );
@@ -109,11 +129,7 @@ class Home_drawer extends GetWidget<AuthController> {
                   SizedBox(
                     height: 5.0,
                   ),
-                  Text(_email,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: MediaQuery.of(context).size.height / 60,
-                      )),
+                  getUseremail()
                 ],
               ),
             ),
@@ -140,7 +156,7 @@ class Home_drawer extends GetWidget<AuthController> {
                     fontSize: MediaQuery.of(context).size.height / 50,
                   )),
               onTap: () {
-                Get.to(profile(), arguments: _email);
+                Get.to(Profile(), arguments: _email);
               },
             ),
           ),

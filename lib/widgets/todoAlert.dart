@@ -60,11 +60,13 @@ class TodoAlert {
                     FireDb().addTodo(
                         _textEditingController.text, _userController.user.id);
                     _textEditingController.clear();
-
                     Get.back();
                     Fluttertoast.showToast(
-                        msg: "Todo Added", backgroundColor: Colors.grey);
-                  }
+                        msg: "Todo Added", backgroundColor: Colors.black);
+                  } else
+                    Fluttertoast.showToast(
+                        msg: "Please enter a todo",
+                        backgroundColor: Colors.black);
                 },
                 child: Text(
                   "Add",
@@ -132,8 +134,11 @@ class TodoAlert {
                     _textEditingController.clear();
                     Get.back();
                     Fluttertoast.showToast(
-                        msg: "Todo Updated", backgroundColor: Colors.grey);
-                  }
+                        msg: "Todo Updated", backgroundColor: Colors.black);
+                  } else
+                    Fluttertoast.showToast(
+                        msg: "Please enter a todo",
+                        backgroundColor: Colors.black);
                 },
                 child: Text(
                   "Update",

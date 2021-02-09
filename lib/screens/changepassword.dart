@@ -120,7 +120,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                                       validator: (String value) {
                                         if (value.isEmpty) {
                                           return 'Password is required';
-                                        }
+                                        }else
+                                                      return null;
                                       },
                                       onSaved: (String value) {
                                         current_pass_c.text = value;
@@ -169,7 +170,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                                             .hasMatch(value)) {
                                           return "Password should contain atleast\n* 8 characters *[A-Z] *[a-z] *[0-9] *[!,#,%,&,*,?,^,@]";
-                                        }
+                                        }else
+                                                      return null;
                                       },
                                       onSaved: (String value) {
                                         new_pass_c.text = value;
@@ -216,7 +218,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                                         }
                                         if (value != new_pass_c.text) {
                                           return 'Check your password';
-                                        }
+                                        }else
+                                                      return null;
                                       },
                                       onSaved: (String value) {
                                         confirm_pass_c.text = value;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/models/maincolor.dart';
 import 'package:phone_login/screens/login.dart';
@@ -11,6 +12,9 @@ class GSignUp extends StatefulWidget {
 }
 
 class _GSignUpState extends State<GSignUp> {
+  String initialCountry = 'IN';
+  PhoneNumber phoneNumber = PhoneNumber(isoCode: 'IN');
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -20,6 +24,8 @@ class _GSignUpState extends State<GSignUp> {
   AuthController _authController = AuthController();
   bool _showPassword1 = true;
   bool _showPassword2 = true;
+  String photoURL =
+      "https://www.inovex.de/blog/wp-content/uploads/2019/01/Flutter-1-1.png";
   var g_name = Get.arguments[0];
   var g_mail = Get.arguments[1];
 
@@ -152,43 +158,59 @@ class _GSignUpState extends State<GSignUp> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 15, right: 15),
-                                                child: TextFormField(
-                                                  controller: phonenumber_c,
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                    prefixIcon: Icon(
-                                                      Icons.phone_android,
-                                                      color: mainColor,
-                                                    ),
-                                                    labelText: 'Phone Number',
-                                                    labelStyle: TextStyle(
-                                                      color: mainColor,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              50,
-                                                      fontFamily: 'Montserrat',
-                                                    ),
-                                                  ),
-                                                  validator: (String value) {
-                                                    if (value.isEmpty) {
-                                                      return 'Mobile number is required';
-                                                    }
-                                                    if (!RegExp(
-                                                            r"^(\+91)?(-)?\s*?(91)?\s*?(\d{3})-?\s*?(\d{3})-?\s*?(\d{4})")
-                                                        .hasMatch(value)) {
-                                                      return 'Please enter a valid Mobile number';
-                                                    }
-                                                  },
-                                                  onSaved: (String value) {
-                                                    phonenumber_c.text = value;
-                                                  },
-                                                ),
-                                              ),
+                                                  padding: EdgeInsets.only(
+                                                      left: 15, right: 15),
+                                                  child:
+                                                      InternationalPhoneNumberInput(
+                                                          onInputChanged:
+                                                              (PhoneNumber
+                                                                  number) {
+                                                            print(number
+                                                                .phoneNumber);
+                                                          },
+                                                          selectorConfig:
+                                                              SelectorConfig(
+                                                            selectorType:
+                                                                PhoneInputSelectorType
+                                                                    .BOTTOM_SHEET,
+                                                          ),
+                                                          ignoreBlank: false,
+                                                          autoValidateMode:
+                                                              AutovalidateMode
+                                                                  .disabled,
+                                                          selectorTextStyle:
+                                                              TextStyle(
+                                                                  color:
+                                                                      mainColor),
+                                                          initialValue:
+                                                              phoneNumber,
+                                                          textFieldController:
+                                                              phonenumber_c,
+                                                          formatInput: false,
+                                                          hintText:
+                                                              "Mobile Number",
+                                                          textStyle: TextStyle(
+                                                              color: mainColor,
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height /
+                                                                  50,
+                                                              fontFamily:
+                                                                  'Montserrat'),
+                                                          keyboardType: TextInputType
+                                                              .numberWithOptions(
+                                                                  signed: true,
+                                                                  decimal:
+                                                                      true),
+                                                          onSaved: (PhoneNumber
+                                                              number) {
+                                                            phonenumber_c.text =
+                                                                number
+                                                                    .toString();
+                                                            print(
+                                                                'On Saved: $number');
+                                                          })),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
@@ -321,7 +343,8 @@ class _GSignUpState extends State<GSignUp> {
                                                             r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                                                         .hasMatch(value)) {
                                                       return "Password should contain atleast\n* 8 characters *[A-Z] *[a-z] *[0-9] *[!,#,%,&,*,?,^,@]";
-                                                    }
+                                                    } else
+                                                      return null;
                                                   },
                                                   onSaved: (String value) {
                                                     passwordController.text =
@@ -379,7 +402,8 @@ class _GSignUpState extends State<GSignUp> {
                                                         passwordController
                                                             .text) {
                                                       return 'Check your password';
-                                                    }
+                                                    } else
+                                                      return null;
                                                   },
                                                   onSaved: (String value) {
                                                     confirmpass_c.text = value;
@@ -483,7 +507,10 @@ class _GSignUpState extends State<GSignUp> {
                                                                 emailController
                                                                     .text,
                                                                 passwordController
-                                                                    .text);
+                                                                    .text,
+                                                                phonenumber_c
+                                                                    .text,
+                                                                photoURL);
                                                       },
                                                       child: Text(
                                                         "Register",

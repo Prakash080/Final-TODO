@@ -4,9 +4,16 @@ import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/models/maincolor.dart';
 import 'package:phone_login/widgets/loading.dart';
 
-class DeleteAccount extends GetWidget<AuthController> {
+class DeleteAccount extends StatefulWidget {
+  @override
+  _DeleteAccountState createState() => _DeleteAccountState();
+}
+
+class _DeleteAccountState extends State<DeleteAccount> {
   final TextEditingController email_c = TextEditingController();
   final TextEditingController pass_c = TextEditingController();
+  AuthController _authController = AuthController();
+  bool _showPassword1 = true;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -92,8 +99,20 @@ class DeleteAccount extends GetWidget<AuthController> {
                                   child: TextFormField(
                                     controller: pass_c,
                                     keyboardType: TextInputType.text,
-                                    obscureText: true,
+                                    obscureText: _showPassword1,
                                     decoration: InputDecoration(
+                                      suffixIcon: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _showPassword1 = !_showPassword1;
+                                          });
+                                        },
+                                        child: Icon(
+                                            _showPassword1
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: mainColor),
+                                      ),
                                       prefixIcon: Icon(
                                         Icons.lock,
                                         color: mainColor,
@@ -131,7 +150,7 @@ class DeleteAccount extends GetWidget<AuthController> {
                                         ),
                                         onPressed: () {
                                           Get.to(Loading());
-                                          controller.deleteuseraccount(
+                                          _authController.deleteuseraccount(
                                               email_c.text, pass_c.text);
                                         },
                                         child: Text(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_login/controllers/authController.dart';
 import 'package:phone_login/controllers/todoController.dart';
 import 'package:phone_login/controllers/userController.dart';
@@ -23,10 +24,7 @@ class Home extends StatelessWidget {
             await FireDb().getUser(Get.find<AuthController>().user.uid);
       },
       builder: (_userController) {
-        return Text(
-            (_userController.user == null)
-                ? ""
-                : _userController.user.name.toString(),
+        return Text(_userController.user.name.toString(),
             style: TextStyle(
                 fontWeight: FontWeight.bold, fontFamily: 'Montserrat'));
       },
@@ -105,8 +103,15 @@ class Home extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           backgroundColor: mainColor,
           child: Icon(Icons.add),
-          onPressed: () {
-            TodoAlert().addTodoDailog();
+          onPressed: () async {
+            var status = await Permission.storage.status;
+            if (status.isGranted) {
+              TodoAlert().addTodoDailog();
+            } else {
+              PermissionStatus permissionStatus =
+                  await Permission.storage.request();
+              print("permissionStatus:${permissionStatus.isGranted}");
+            }
           },
         ),
         body: Column(
@@ -135,6 +140,7 @@ class Home extends StatelessWidget {
                   );
                 } else {
                   Get.to(Loading());
+                  return null;
                 }
               },
             )

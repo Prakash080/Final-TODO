@@ -11,8 +11,11 @@ import 'package:phone_login/screens/login.dart';
 import 'package:phone_login/screens/gSignup.dart';
 import 'package:phone_login/services/fireDB.dart';
 import 'package:phone_login/utils/root.dart';
+import 'package:phone_login/widgets/loading.dart';
 
 class AuthController extends GetxController {
+  String errorMessage;
+
   FirebaseAuth _auth = FirebaseAuth.instance;
   Rx<User> _fireUser = Rx<User>();
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -25,7 +28,8 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  void createUser(String name, String email, String password) async {
+  void createUser(String name, String email, String password, String phone,
+      String photoURL) async {
     try {
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
@@ -34,20 +38,43 @@ class AuthController extends GetxController {
       );
 
       UserModel _user = UserModel(
-        id: userCredential.user.uid,
-        email: userCredential.user.email,
-        name: name,
-      );
+          id: userCredential.user.uid,
+          email: userCredential.user.email,
+          name: name,
+          phone: phone,
+          photoURL: photoURL);
 
       var rs = await FireDb().createNewUser(_user);
       if (rs) {
         Get.find<UserController>().user = _user;
         Get.back();
-        Get.offAll(VerifyPage());
+        Get.off(VerifyPage());
       }
     } catch (e) {
       Get.back();
-      Fluttertoast.showToast(msg: e.message);
+      switch (e.code) {
+        case "email-already-in-use":
+          Fluttertoast.showToast(
+              msg: "Your email already exist", backgroundColor: Colors.black);
+          break;
+        case "invalid-email":
+          Fluttertoast.showToast(
+              msg: "Your email is invalid,please enter valid email",
+              backgroundColor: Colors.black);
+          break;
+        case "operation-not-allowed":
+          Fluttertoast.showToast(
+              msg: "Database error", backgroundColor: Colors.black);
+          break;
+        case "weak-password":
+          Fluttertoast.showToast(
+              msg: "Your password is too week", backgroundColor: Colors.black);
+          break;
+        default:
+          Fluttertoast.showToast(
+              msg: "Error while registering an account",
+              backgroundColor: Colors.black);
+      }
     }
   }
 
@@ -61,10 +88,36 @@ class AuthController extends GetxController {
           await FireDb().getUser(userCredential.user.uid);
       Get.back();
       Get.to(Home());
-      Fluttertoast.showToast(msg: "Login Successful");
+      Fluttertoast.showToast(
+          msg: "Login Successful", backgroundColor: Colors.black);
     } catch (e) {
       Get.back();
-      Fluttertoast.showToast(msg: e.message);
+      switch (e.code) {
+        case "invalid-email":
+          Fluttertoast.showToast(
+              msg: "Your email address is invalid",
+              backgroundColor: Colors.black);
+          break;
+        case "wrong-password":
+          Fluttertoast.showToast(
+              msg: "Your password is wrong.", backgroundColor: Colors.black);
+
+          break;
+        case "user-not-found":
+          Fluttertoast.showToast(
+              msg: "User with this email doesn't exist.",
+              backgroundColor: Colors.black);
+          break;
+        case "user-disabled":
+          Fluttertoast.showToast(
+              msg: "User with this email has been disabled.",
+              backgroundColor: Colors.black);
+          break;
+        default:
+          Fluttertoast.showToast(
+              msg: "Recheck your email and password",
+              backgroundColor: Colors.black);
+      }
     }
   }
 
@@ -78,10 +131,13 @@ class AuthController extends GetxController {
     await _auth.sendPasswordResetEmail(email: email).then((value) {
       Get.back();
       Get.off(Login());
-      Fluttertoast.showToast(msg: "Password Reset email link has been sent");
+      Fluttertoast.showToast(
+          msg: "Password Reset email link has been sent",
+          backgroundColor: Colors.black);
     }).catchError((onError) {
       Get.back();
-      Fluttertoast.showToast(msg: onError.message);
+      Fluttertoast.showToast(
+          msg: onError.message, backgroundColor: Colors.black);
     });
   }
 
@@ -92,22 +148,47 @@ class AuthController extends GetxController {
         EmailAuthProvider.credential(email: email, password: pass);
 
     await user.reauthenticateWithCredential(credential).then((value) {
-      FireDb().deleteNewUser(user);
+      FireDb().deleteNewUser(user.uid);
       value.user.delete().then((res) {
         Get.back();
         Get.offAll(Login());
-        Fluttertoast.showToast(msg: "User account deleted successfully");
+        googleSignIn.signOut();
+        Fluttertoast.showToast(
+            msg: "User account deleted successfully",
+            backgroundColor: Colors.black);
       });
-    }).catchError((onError) {
+    }).catchError((e) {
       Get.back();
-      Fluttertoast.showToast(msg: onError.message);
+      switch (e.code) {
+        case "invalid-email":
+          Fluttertoast.showToast(
+              msg: "Your email address is invalid",
+              backgroundColor: Colors.black);
+          break;
+        case "wrong-password":
+          Fluttertoast.showToast(
+              msg: "Your password is wrong.", backgroundColor: Colors.black);
+
+          break;
+        case "user-not-found":
+          Fluttertoast.showToast(
+              msg: "User with this email doesn't exist.",
+              backgroundColor: Colors.black);
+          break;
+        default:
+          Fluttertoast.showToast(
+              msg: "Recheck your email and password",
+              backgroundColor: Colors.black);
+      }
     });
   }
 
-  Future google_signIn() async {
+  Future<void> google_signIn() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+
     final GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
+    Get.to(Loading());
     final AuthCredential authcredential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken);
@@ -118,16 +199,38 @@ class AuthController extends GetxController {
     final User user = userCredential.user;
     assert(user.displayName != null);
     assert(user.email != null);
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
-
     try {
       Get.back();
       Get.to(GSignUp(), arguments: [user.displayName, user.email]);
       user.delete();
     } catch (e) {
       Get.back();
-      Fluttertoast.showToast(msg: e.message);
+      switch (e.code) {
+        case "invalid-email":
+          Fluttertoast.showToast(
+              msg: "Your email address is invalid",
+              backgroundColor: Colors.black);
+          break;
+        case "wrong-password":
+          Fluttertoast.showToast(
+              msg: "Your password is wrong.", backgroundColor: Colors.black);
+
+          break;
+        case "user-not-found":
+          Fluttertoast.showToast(
+              msg: "User with this email doesn't exist.",
+              backgroundColor: Colors.black);
+          break;
+        case "user-disabled":
+          Fluttertoast.showToast(
+              msg: "User with this email has been disabled.",
+              backgroundColor: Colors.black);
+          break;
+        default:
+          Fluttertoast.showToast(
+              msg: "Recheck your email and password",
+              backgroundColor: Colors.black);
+      }
     }
   }
 
@@ -136,7 +239,7 @@ class AuthController extends GetxController {
   }
 
   Future<bool> validatepassword(String password) async {
-    var firebaseuser = await _auth.currentUser;
+    var firebaseuser = _auth.currentUser;
     var authcredential = EmailAuthProvider.credential(
         email: firebaseuser.email, password: password);
     try {
@@ -144,16 +247,17 @@ class AuthController extends GetxController {
           await firebaseuser.reauthenticateWithCredential(authcredential);
       return authresult.user != null;
     } catch (e) {
-      Fluttertoast.showToast(msg: e.message);
+      Fluttertoast.showToast(msg: e.message, backgroundColor: Colors.black);
       return false;
     }
   }
 
   void updateuserpassword(String newpassword) async {
-    var firebaseuser = await _auth.currentUser;
+    var firebaseuser = _auth.currentUser;
     firebaseuser.updatePassword(newpassword);
     Get.back();
     Get.off(Home());
-    Fluttertoast.showToast(msg: "Password updated successfully");
+    Fluttertoast.showToast(
+        msg: "Password updated successfully", backgroundColor: Colors.black);
   }
 }
