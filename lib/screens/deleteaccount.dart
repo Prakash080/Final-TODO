@@ -13,6 +13,8 @@ class _DeleteAccountState extends State<DeleteAccount> {
   final TextEditingController email_c = TextEditingController();
   final TextEditingController pass_c = TextEditingController();
   AuthController _authController = AuthController();
+  bool isenabled1 = false;
+  bool isenabled2 = false;
   bool _showPassword1 = true;
   @override
   Widget build(BuildContext context) {
@@ -78,6 +80,12 @@ class _DeleteAccountState extends State<DeleteAccount> {
                                   child: TextFormField(
                                     controller: email_c,
                                     keyboardType: TextInputType.emailAddress,
+                                    onTap: () {
+                                      if (pass_c.text != null) {
+                                        return isenabled1 = true;
+                                      } else
+                                        return isenabled1 = false;
+                                    },
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(
                                         Icons.email,
@@ -99,6 +107,12 @@ class _DeleteAccountState extends State<DeleteAccount> {
                                   child: TextFormField(
                                     controller: pass_c,
                                     keyboardType: TextInputType.text,
+                                    onTap: () {
+                                      if (pass_c.text != null) {
+                                        return isenabled2 = true;
+                                      } else
+                                        return isenabled2 = false;
+                                    },
                                     obscureText: _showPassword1,
                                     decoration: InputDecoration(
                                       suffixIcon: GestureDetector(
@@ -148,11 +162,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
                                               topLeft: Radius.circular(30),
                                               bottomRight: Radius.circular(30)),
                                         ),
-                                        onPressed: () {
-                                          Get.to(Loading());
-                                          _authController.deleteuseraccount(
-                                              email_c.text, pass_c.text);
-                                        },
+                                        disabledColor: Colors.blueAccent,
+                                        onPressed: (isenabled1 && isenabled2)
+                                            ? _delete
+                                            : null,
                                         child: Text(
                                           "Delete Account",
                                           style: TextStyle(
@@ -219,5 +232,16 @@ class _DeleteAccountState extends State<DeleteAccount> {
         ),
       ),
     );
+  }
+
+  void _delete() async {
+    Get.to(Loading());
+    _authController.deleteuseraccount(email_c.text, pass_c.text);
+    email_c.clear();
+    pass_c.clear();
+    setState(() {
+      isenabled1 = false;
+      isenabled2 = false;
+    });
   }
 }

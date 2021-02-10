@@ -16,6 +16,8 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _showPassword = true;
+  bool isenabled1 = false;
+  bool isenabled2 = false;
   AuthController _authController = AuthController();
 
   @override
@@ -85,6 +87,12 @@ class _LoginState extends State<Login> {
                                   child: TextFormField(
                                     controller: emailController,
                                     keyboardType: TextInputType.emailAddress,
+                                    onTap: () {
+                                      if (emailController.text != null) {
+                                        return isenabled1 = true;
+                                      } else
+                                        return isenabled1 = false;
+                                    },
                                     decoration: InputDecoration(
                                         prefixIcon: Icon(
                                           Icons.email,
@@ -106,6 +114,12 @@ class _LoginState extends State<Login> {
                                   child: TextFormField(
                                     controller: passwordController,
                                     keyboardType: TextInputType.text,
+                                    onTap: () {
+                                      if (passwordController.text != null) {
+                                        return isenabled2 = true;
+                                      } else
+                                        return isenabled2 = false;
+                                    },
                                     obscureText: _showPassword,
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(
@@ -173,12 +187,15 @@ class _LoginState extends State<Login> {
                                       child: RaisedButton(
                                         elevation: 15.0,
                                         color: mainColor,
+                                        disabledColor: Colors.blueAccent,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(30),
                                               bottomRight: Radius.circular(30)),
                                         ),
-                                        onPressed: _login,
+                                        onPressed: (isenabled1 && isenabled2)
+                                            ? _login
+                                            : null,
                                         child: Text(
                                           "Login",
                                           style: TextStyle(
@@ -311,5 +328,9 @@ class _LoginState extends State<Login> {
     _authController.login(emailController.text, passwordController.text);
     emailController.clear();
     passwordController.clear();
+    setState(() {
+      isenabled1 = false;
+      isenabled2 = false;
+    });
   }
 }
